@@ -4,10 +4,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Header from "./Header";
 import Footer from "./Footer";
-import Confirmation from "./Confirmation";
-import Reservation from "./Reservation";
 import GlobalStyles from "./GlobalStyles";
 import Home from "./Home";
+import RecipeDetails from "./RecipeDetails";
+
+import backgroundImage from "../assets/Pictures/backgroundImage.jpg";
+import Profile from "./Profile";
 
 const App = () => {
   const [selectedFlight, setSelectedFlight] = useState("");
@@ -18,30 +20,45 @@ const App = () => {
   };
 
   return (
-    <BrowserRouter>
-      <GlobalStyles />
-      <Header handleChange={handleChange} />
-      <Main>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route
-            path="/confirmation"
-            element={<Confirmation reservationData={reservationData} />}
-          />
-          <Route path="/reservation" element={<Reservation />} />
-          <Route path="" element={<h1>404: Oops!</h1>} />
-        </Routes>
-        <Footer />
-      </Main>
-    </BrowserRouter>
+    <MainDiv>
+      <StyledImage src={backgroundImage} />
+      <BrowserRouter>
+        {/* <GlobalStyles /> */}
+        <Header />
+        <Main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/recipe/:id" element={<RecipeDetails />} />
+
+            <Route path="/profile" element={<Profile />} />
+            <Route path="" element={<h1>404: Oops!</h1>} />
+          </Routes>
+          <Footer />
+        </Main>
+      </BrowserRouter>
+    </MainDiv>
   );
 };
 
+const MainDiv = styled.div`
+  height: 100vh;
+`;
 const Main = styled.div`
-  background: var(--color-orange);
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 150px);
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+`;
+const StyledImage = styled.img`
+  position: absolute;
+  left: 0%;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  z-index: -2;
+  object-fit: cover;
 `;
 
 export default App;

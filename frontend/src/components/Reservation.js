@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
-import tombstone from "../assets/tombstone.png";
 
 const Reservation = () => {
   const [reservationData, setReservationData] = useState(null);
@@ -33,7 +32,6 @@ const Reservation = () => {
           <p>Loading reservation information...</p>
         )}
       </Wrapper>
-      <StyledImage src={tombstone} alt="tomstone" />
     </MainDiv>
   );
 };

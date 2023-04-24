@@ -10,6 +10,7 @@ const {
   getMeal,
   getRecipeById,
   getDessert,
+  addUser,
 } = require("./handlers");
 
 express()
@@ -31,6 +32,7 @@ express()
   .get("/api/get-meal", getMeal)
   .get("/api/get-recipe-byId/:id", getRecipeById)
   .get("/api/get-dessert", getDessert)
+  .post("/api/add-user", addUser)
 
   .get("*", (req, res) => {
     res.status(404).json({

@@ -1,12 +1,7 @@
 import styled from "styled-components";
 
-import slingImg from "../assets/air-sling.png";
-
 const Footer = () => (
-    <Wrapper>
-        <Logo src={slingImg} />
-        <Text>The only way to fly!</Text>
-    </Wrapper>
+  <Wrapper>{/* <Text>The only way to fly!</Text> */}</Wrapper>
 );
 
 const Wrapper = styled.div`
