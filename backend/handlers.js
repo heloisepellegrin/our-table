@@ -92,28 +92,28 @@ const addUser = async (req, res) => {
 
   try {
     await client.connect();
-    const db = client.db("ourtable");
+    const db = client.db("our-table");
 
     const existingUser = await db
       .collection("users")
       .findOne({ email: req.body.email });
 
+    console.log("existingUser", existingUser);
     if (!existingUser) {
       await db.collection("users").insertOne({ _id: uuidv4(), ...req.body });
-      res.status(201).json({ status: 201, message: "user added to db" });
+      return res.status(201).json({ status: 201, message: "user added to db" });
     }
     {
-      res
+      return res
         .status(400)
         .json({ status: 400, message: "user already added to db" });
     }
   } catch (err) {
     console.log(err);
-    res.status(400).json({
+    return res.status(400).json({
       status: 400,
       message: "adding user to db failed!",
     });
-    client.close();
   }
 };
 

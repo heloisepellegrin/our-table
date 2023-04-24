@@ -52,7 +52,7 @@ const CardContainer = styled.div`
   height: 100vh;
   overflow-y: scroll;
   position: absolute;
-  top: 10%;
+  top: 15%;
   z-index: 1000;
 `;
 

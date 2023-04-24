@@ -39,6 +39,9 @@ const Header = () => {
 
         <Container>
           <StyledFridge
+            onClick={() => {
+              navigate("/fridge");
+            }}
             onMouseOver={() => {
               setText("Pick Your Ingredients");
               setId(1);

@@ -10,6 +10,7 @@ import RecipeDetails from "./RecipeDetails";
 
 import backgroundImage from "../assets/Pictures/backgroundImage.jpg";
 import Profile from "./Profile";
+import Fridge from "./Fridge";
 
 const App = () => {
   const [selectedFlight, setSelectedFlight] = useState("");
@@ -29,7 +30,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/recipe/:id" element={<RecipeDetails />} />
-
+            <Route path="/fridge" element={<Fridge />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="" element={<h1>404: Oops!</h1>} />
           </Routes>
