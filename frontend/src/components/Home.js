@@ -1,60 +1,18 @@
 import backgroundImage from "../assets/Pictures/backgroundImage.jpg";
 import styled from "styled-components";
-import { useContext, useState } from "react";
-import { TableContext } from "./TableContext";
-import RecipeCard from "./RecipeCard";
 
 const Home = () => {
-  const { randomRecipes, setRandomRecipes, isRandom, setIsRandom } =
-    useContext(TableContext);
-
-  console.log("randomRecipes", randomRecipes);
   return (
     <Wrapper>
       <StyledLandingInfo>
-        {!isRandom && (
-          <>
-            <h1>What's in your fridge?</h1>
-            <div>
-              <h3>TRY A RECIPE AND UNLEASH YOUR INNER CHEF</h3>
-              <button
-                onClick={() => {
-                  setIsRandom(true);
-                }}
-              >
-                Find Recipes
-              </button>
-            </div>
-          </>
-        )}
+        <h1>What's in your kitchen?</h1>
+        <div>
+          <h3>TRY A RECIPE AND UNLEASH YOUR INNER CHEF</h3>
+        </div>
       </StyledLandingInfo>
-      <CardContainer>
-        {isRandom &&
-          randomRecipes.map((recipe) => {
-            return (
-              <RecipeCard
-                id={recipe.id}
-                image={recipe.image}
-                title={recipe.title}
-                readyInMinutes={recipe.readyInMinutes}
-                ingredients={recipe.extendedIngredients}
-              />
-            );
-          })}
-      </CardContainer>
     </Wrapper>
   );
 };
-
-const CardContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  height: 100vh;
-  overflow-y: scroll;
-  position: absolute;
-  top: 15%;
-  z-index: 1000;
-`;
 
 const Wrapper = styled.div`
   width: 100vw;

@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { NavLink, Link, useNavigate, useLocation } from "react-router-dom";
-import { GiCupcake } from "react-icons/gi";
-import { AiFillHome } from "react-icons/ai";
-import { RiFridgeFill } from "react-icons/ri";
-import { SiCodechef } from "react-icons/si";
 import { useAuth0 } from "@auth0/auth0-react";
 
 import plate from "../assets/plate.png";
@@ -20,102 +16,59 @@ const Header = () => {
   return (
     <Wrapper>
       <StyledNav>
-        <Container>
-          <StyledHome
-            onClick={() => {
-              navigate("/");
-            }}
-            onMouseOver={() => {
-              setText("Home");
-              setId(0);
-            }}
-            onMouseLeave={() => {
-              setText("");
-              setId(null);
-            }}
-          />
-          {id === 0 && <p>{text}</p>}
+        <Container
+          onClick={() => {
+            navigate("/");
+          }}
+        >
+          HOME
         </Container>
+        <Line />
 
-        <Container>
-          <StyledFridge
-            onClick={() => {
-              navigate("/fridge");
-            }}
-            onMouseOver={() => {
-              setText("Pick Your Ingredients");
-              setId(1);
-            }}
-            onMouseLeave={() => {
-              setText("");
-              setId(null);
-            }}
-          />
-          {id === 1 && <p>{text}</p>}
+        <Container
+          onClick={() => {
+            navigate("/recipes");
+          }}
+        >
+          RECIPES
         </Container>
-
-        <Container>
-          <StyledPlate
-            src={plate}
-            onMouseOver={() => {
-              setText("Meal Finder");
-              setId(2);
-            }}
-            onMouseLeave={() => {
-              setText("");
-              setId(null);
-            }}
-          />
-          {id === 2 && <p>{text}</p>}
+        <Line />
+        <Container
+          onClick={() => {
+            navigate("/fridge");
+          }}
+        >
+          FRIDGE
         </Container>
+        <Line />
 
-        <Container>
-          <StyledCupcake
-            src={plate}
-            onMouseOver={() => {
-              setText("Dessert Finder");
-              setId(3);
-            }}
-            onMouseLeave={() => {
-              setText("");
-              setId(null);
-            }}
-          />
-          {id === 3 && <p>{text}</p>}
+        <Container
+          onClick={() => {
+            navigate("/pantry");
+          }}
+        >
+          PANTRY
         </Container>
+        <Line />
 
-        <Container>
-          <StyledChef
-            onClick={() => {
-              if (isAuthenticated) {
-                navigate("/profile");
-              }
-              if (!isAuthenticated) {
-                loginWithRedirect();
-              }
-              if (location.pathname === "/profile" && isAuthenticated) {
-                logout({ logoutParams: { returnTo: window.location.origin } });
-              }
-            }}
-            src={plate}
-            onMouseOver={() => {
-              if (isAuthenticated) {
-                setText("Profile");
-              }
-              if (!isAuthenticated) {
-                setText("logIn");
-              }
-              if (location.pathname === "/profile" && isAuthenticated) {
-                setText("log Out");
-              }
-              setId(4);
-            }}
-            onMouseLeave={() => {
-              setText("");
-              setId(null);
-            }}
-          />
-          {id === 4 && <p>{text}</p>}
+        <Container
+          onClick={() => {
+            if (isAuthenticated) {
+              navigate("/profile");
+            }
+            if (!isAuthenticated) {
+              loginWithRedirect();
+            }
+            if (location.pathname === "/profile" && isAuthenticated) {
+              logout({ logoutParams: { returnTo: window.location.origin } });
+            }
+          }}
+        >
+          {isAuthenticated && location.pathname === "/profile"
+            ? "LOG OUT"
+            : isAuthenticated
+            ? "PROFILE"
+            : "lOG IN"}
         </Container>
       </StyledNav>
     </Wrapper>
@@ -123,54 +76,31 @@ const Header = () => {
 };
 
 const StyledNav = styled.div`
-  padding: 10px 25px;
+  padding: 20px 25px;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
+  background: #f1bfab;
+  border-radius: 30px;
+  margin-top: 20px;
+  z-index: 99999;
 `;
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  p {
-    position: absolute;
-    top: 60%;
-    z-index: 10;
-    margin-top: 20px;
-    padding: 5px 25px;
-    border-radius: 50%;
-    background-color: white;
-  }
+const Line = styled.li`
+  width: 1px;
+  height: 100%;
+  background-color: white;
+  border-right: 1px solid white;
+  z-index: 100;
+  list-style: none;
 `;
-const StyledHome = styled(AiFillHome)`
-  font-size: 40px;
+const Container = styled.li`
+  list-style: none;
+  text-align: center;
   color: white;
   cursor: pointer;
 `;
 
-const StyledFridge = styled(RiFridgeFill)`
-  font-size: 40px;
-  color: white;
-  cursor: pointer;
-`;
-const StyledPlate = styled.img`
-  width: 50px;
-  color: white;
-  cursor: pointer;
-`;
-const StyledCupcake = styled(GiCupcake)`
-  font-size: 40px;
-  color: white;
-  cursor: pointer;
-`;
-const StyledChef = styled(SiCodechef)`
-  font-size: 40px;
-  color: white;
-  cursor: pointer;
-`;
 const Wrapper = styled.header`
   display: flex;
   justify-content: space-between;
@@ -178,6 +108,9 @@ const Wrapper = styled.header`
   flex-direction: column;
   background: var(--color-alabama-crimson);
   height: 10vh;
+
+  margin: 0px auto;
+  width: 90vw;
   padding: 5px;
   padding: var(--padding-page) 18px;
 `;

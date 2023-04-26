@@ -11,6 +11,8 @@ import RecipeDetails from "./RecipeDetails";
 import backgroundImage from "../assets/Pictures/backgroundImage.jpg";
 import Profile from "./Profile";
 import Fridge from "./Fridge";
+import Pantry from "./Pantry";
+import RandomRecipes from "./RandomRecipes";
 
 const App = () => {
   const [selectedFlight, setSelectedFlight] = useState("");
@@ -29,8 +31,10 @@ const App = () => {
         <Main>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/recipes" element={<RandomRecipes />} />
             <Route path="/recipe/:id" element={<RecipeDetails />} />
             <Route path="/fridge" element={<Fridge />} />
+            <Route path="/pantry" element={<Pantry />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="" element={<h1>404: Oops!</h1>} />
           </Routes>

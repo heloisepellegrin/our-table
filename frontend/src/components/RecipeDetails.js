@@ -2,11 +2,9 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { TableContext } from "./TableContext";
-import gradient from "../assets/Pictures/gradient.png";
-
+import Comments from "./Comments";
 const RecipeDetails = () => {
-  const { singleRecipe, setSingleRecipe, setIsRandom } =
-    useContext(TableContext);
+  const { singleRecipe, setSingleRecipe } = useContext(TableContext);
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -32,9 +30,16 @@ const RecipeDetails = () => {
 
   return (
     <Container>
-      <LeftContainer>
+      <FirstContainer>
         <Title>{singleRecipe.title}</Title>
 
+        <Info>
+          <p>Servings: {singleRecipe.servings}</p>
+          <p>Ready in {singleRecipe.readyInMinutes} Minutes!</p>
+          <p>
+            It is {singleRecipe.dairyFree ? "dairy free" : "not dairy free"}
+          </p>
+        </Info>
         <Section>
           <SectionTitle>Ingredients</SectionTitle>
           <ul>
@@ -50,46 +55,47 @@ const RecipeDetails = () => {
 
         <Section>
           <SectionTitle>Instructions</SectionTitle>
-          <Instructions>{singleRecipe.instructions}</Instructions>
+          <Instructions
+            dangerouslySetInnerHTML={{ __html: singleRecipe.instructions }}
+          />
         </Section>
         <Section>
           <button
             onClick={() => {
-              setIsRandom(true);
-              navigate("/");
+              navigate("/recipes");
             }}
           >
             Browse more recipes
           </button>
         </Section>
-      </LeftContainer>
-      <RightContainer>
-        <BackgroundImage src={gradient} />
+      </FirstContainer>
+      <SecondContainer>
         <RecipeImage src={singleRecipe.image} />
-        <Info>
-          <p>Servings: {singleRecipe.servings}</p>
-          <p>Ready in {singleRecipe.readyInMinutes} Minutes!</p>
-          <p>
-            It is {singleRecipe.dairyFree ? "dairy free" : "not dairy free"}
-          </p>
-        </Info>
-      </RightContainer>
+      </SecondContainer>
+      <ThirdContainer>
+        <Comments />
+      </ThirdContainer>
     </Container>
   );
 };
 
 const Container = styled.div`
-  height: 90vh;
+  height: 100vh;
+  overflow-y: scroll;
+  position: absolute;
+  top: 0%;
+
+  bottom: 0%;
   width: 95%;
-  padding: 20px;
+
   background: white;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 50px;
+  padding: 0px 100px;
 `;
 
-const LeftContainer = styled.div`
+const FirstContainer = styled.div`
   width: 50%;
   height: 100%;
   display: flex;
@@ -97,9 +103,18 @@ const LeftContainer = styled.div`
   justify-content: space-between;
   align-items: flex-start;
   padding-right: 50px;
+  padding-top: 150px;
 `;
 
-const RightContainer = styled.div`
+const SecondContainer = styled.div`
+  padding-top: 150px;
+  width: 50%;
+  height: 100%;
+  position: relative;
+  z-index: 12;
+`;
+const ThirdContainer = styled.div`
+  padding-top: 150px;
   width: 50%;
   height: 100%;
   position: relative;
@@ -119,7 +134,7 @@ const RecipeImage = styled.img`
   height: 50%;
   width: 50%;
   position: absolute;
-  border: 1px solid gray;
+
   border-radius: 10px;
   object-fit: contain;
   top: 50%;
@@ -165,17 +180,13 @@ const Instructions = styled.p`
 `;
 
 const Info = styled.div`
-  position: absolute;
-  width: 300px;
+  width: 500px;
   height: 150px;
   background: #e29b7e;
   z-index: 20;
-  top: 68%;
-  left: 40%;
-
   display: flex;
   justify-content: space-between;
-  flex-direction: column;
+
   border-radius: 10px;
   p {
     padding: 0px 10px;

@@ -7,10 +7,16 @@ const morgan = require("morgan");
 const {
   getByIngredients,
   getRandomRecipes,
-  getMeal,
+
   getRecipeById,
   getDessert,
   addUser,
+  addComments,
+  getComments,
+  updateComments,
+  deleteComments,
+  addLike,
+  deleteLike,
 } = require("./handlers");
 
 express()
@@ -29,10 +35,16 @@ express()
 
   .get("/api/get-by-ingredients", getByIngredients)
   .get("/api/get-random", getRandomRecipes)
-  .get("/api/get-meal", getMeal)
+
   .get("/api/get-recipe-byId/:id", getRecipeById)
   .get("/api/get-dessert", getDessert)
   .post("/api/add-user", addUser)
+  .post("/api/comments", addComments)
+  .get("/api/comments", getComments)
+  .patch("/api/comments/:_id", updateComments)
+  .delete("/api/comments/:_id", deleteComments)
+  .post("/api/like", addLike)
+  .delete("/api/like/:_id", deleteLike)
 
   .get("*", (req, res) => {
     res.status(404).json({
