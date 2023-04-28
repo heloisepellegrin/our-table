@@ -8,6 +8,7 @@ export const TableProvider = ({ children }) => {
   const [singleRecipe, setSingleRecipe] = useState({});
   const { user, isAuthenticated } = useAuth0();
   const [myBasket, setMyBasket] = useState([]);
+  const [comment, setComment] = useState("");
 
   useEffect(() => {
     fetch("/api/get-random")
@@ -41,6 +42,8 @@ export const TableProvider = ({ children }) => {
         setSingleRecipe,
         myBasket,
         setMyBasket,
+        comment,
+        setComment,
       }}
     >
       {children}

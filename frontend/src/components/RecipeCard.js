@@ -6,14 +6,6 @@ const RecipeCard = ({ image, title, readyInMinutes, ingredients, id }) => {
   return (
     <>
       <StyledWrapper>
-        <img src={image} />
-
-        <p>Is ready in {readyInMinutes} min</p>
-        <div>
-          {ingredients.map((item) => {
-            return <span>{item.name}</span>;
-          })}
-        </div>
         <button
           onClick={() => {
             navigate(`/recipe/${id}`);
@@ -21,34 +13,41 @@ const RecipeCard = ({ image, title, readyInMinutes, ingredients, id }) => {
         >
           {title}
         </button>
+        <img src={image} />
+        <div>
+          {ingredients.map((item) => {
+            return <span>{item.name}</span>;
+          })}
+        </div>
       </StyledWrapper>
     </>
   );
 };
 
 const StyledWrapper = styled.div`
-  border: 1px solid gray;
   border-radius: 20px;
   box-shadow: 10px solid black;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
-  background: white;
+  background-color: white;
+  background: #f1bfab;
   margin: 10px;
-
-  p {
-    margin: 5px 0px;
-    color: #e29b7e;
-  }
+  padding-bottom: 10px;
+  /* width: 250px; */
 
   button {
-    background: #e29b7e;
+    background: none;
+    font-family: Bubbly-Soda;
+    text-decoration: underline;
+    font-size: 20px;
+    letter-spacing: 1px;
     border: none;
     padding: 10px 20px;
     border-radius: 20px;
     margin: 10px;
-    color: white;
+    color: black;
     cursor: pointer;
     &:hover {
       background: white;
@@ -68,6 +67,8 @@ const StyledWrapper = styled.div`
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+    font-family: "A little sunshine";
+    letter-spacing: 2px;
   }
   width: 250px;
 `;

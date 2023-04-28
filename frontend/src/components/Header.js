@@ -99,6 +99,8 @@ const Container = styled.li`
   text-align: center;
   color: white;
   cursor: pointer;
+  font-family: Bubbly-Soda;
+  letter-spacing: 1px;
 `;
 
 const Wrapper = styled.header`

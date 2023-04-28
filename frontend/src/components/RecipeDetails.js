@@ -3,9 +3,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { TableContext } from "./TableContext";
 import Comments from "./Comments";
+import recipeframe from "../assets/recipeframe.png";
+import { useAuth0 } from "@auth0/auth0-react";
 const RecipeDetails = () => {
-  const { singleRecipe, setSingleRecipe } = useContext(TableContext);
-
+  const { singleRecipe, setSingleRecipe, comment } = useContext(TableContext);
+  const [recipeComments, setRecipeComments] = useState([]);
+  const [commentId, setCommentId] = useState("");
+  const [updatedComment, setUpdatedComment] = useState("");
+  const { isAuthenticated, user } = useAuth0();
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -17,9 +22,31 @@ const RecipeDetails = () => {
       .then((data) => {
         setSingleRecipe(data.data);
       });
-    // getRecipe();
-  }, [id]);
 
+    fetch(`/api/comments?recipeId=${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setRecipeComments(data.data);
+      });
+  }, [id, comment, commentId]);
+
+  const handleUpdate = (id) => {
+    fetch(`/api/comments/${id}`, {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ comment: updatedComment }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === 200) {
+          setUpdatedComment("");
+          setCommentId("");
+        }
+      });
+  };
   const handleLike = () => {
     setLiked(!liked);
   };
@@ -32,34 +59,77 @@ const RecipeDetails = () => {
     <Container>
       <FirstContainer>
         <Title>{singleRecipe.title}</Title>
-
         <Info>
-          <p>Servings: {singleRecipe.servings}</p>
-          <p>Ready in {singleRecipe.readyInMinutes} Minutes!</p>
-          <p>
-            It is {singleRecipe.dairyFree ? "dairy free" : "not dairy free"}
-          </p>
+          <p>{singleRecipe.servings} servings</p>
+          <p>{singleRecipe.readyInMinutes} minutes</p>
+          <p>{singleRecipe.dairyFree ? "dairy free" : "not dairy free"}</p>
         </Info>
-        <Section>
+      </FirstContainer>
+      <SecondContainer>
+        <ImageDiv>
+          <Frame src={recipeframe} />
+          <RecipeImage src={singleRecipe.image} />
+        </ImageDiv>
+        <IngredientsDiv>
           <SectionTitle>Ingredients</SectionTitle>
           <ul>
             {singleRecipe.extendedIngredients.map((item) => (
               <li>{item.name.charAt(0).toUpperCase() + item.name.slice(1)}</li>
             ))}
           </ul>
-        </Section>
+        </IngredientsDiv>
+      </SecondContainer>
+      <ThirdContainer>
+        <CommentSection>
+          <h3>We wanna hear from you!</h3>
+          {isAuthenticated && <Comments id={id} />}
 
-        <LikeButton onClick={handleLike}>
-          {liked ? "Liked!" : "Like this recipe"}
-        </LikeButton>
-
-        <Section>
-          <SectionTitle>Instructions</SectionTitle>
-          <Instructions
-            dangerouslySetInnerHTML={{ __html: singleRecipe.instructions }}
-          />
-        </Section>
-        <Section>
+          <PastComments>
+            {recipeComments.map((comment) => {
+              console.log("here comment", comment);
+              return (
+                <EditSection>
+                  {isAuthenticated &&
+                    commentId !== comment._id &&
+                    user.email === comment.email && (
+                      <>
+                        <p>{comment.comment}</p>
+                        <div>
+                          <button
+                            onClick={(e) => {
+                              setCommentId(comment._id);
+                              setUpdatedComment(comment.comment);
+                            }}
+                          >
+                            Edit
+                          </button>
+                          <button>Delete</button>
+                        </div>
+                      </>
+                    )}
+                  {isAuthenticated &&
+                    commentId === comment._id &&
+                    user.email === comment.email && (
+                      <div>
+                        <input
+                          value={updatedComment}
+                          onChange={(e) => {
+                            setUpdatedComment(e.target.value);
+                          }}
+                        />
+                        <button
+                          onClick={() => {
+                            handleUpdate(comment._id);
+                          }}
+                        >
+                          Update
+                        </button>
+                      </div>
+                    )}
+                </EditSection>
+              );
+            })}
+          </PastComments>
           <button
             onClick={() => {
               navigate("/recipes");
@@ -67,88 +137,126 @@ const RecipeDetails = () => {
           >
             Browse more recipes
           </button>
-        </Section>
-      </FirstContainer>
-      <SecondContainer>
-        <RecipeImage src={singleRecipe.image} />
-      </SecondContainer>
-      <ThirdContainer>
-        <Comments />
+        </CommentSection>
+        <InstructionsWrapper>
+          <SectionTitle>Instructions</SectionTitle>
+          <Instructions
+            dangerouslySetInnerHTML={{ __html: singleRecipe.instructions }}
+          />
+        </InstructionsWrapper>
       </ThirdContainer>
     </Container>
   );
 };
 
-const Container = styled.div`
-  height: 100vh;
+const EditSection = styled.div`
+  display: flex;
+  /* justify-content: center;
+  align-items: center; */
+  justify-content: space-between;
+  padding: 0px 20px;
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    button {
+      margin-left: 5px;
+      padding: 5px 10px;
+    }
+  }
+`;
+const PastComments = styled.div`
+  display: flex;
+  flex-direction: column;
   overflow-y: scroll;
-  position: absolute;
+  height: 100px;
+  border: 1px solid red;
+`;
+const Container = styled.div`
+  height: 100%;
+  overflow-y: scroll;
+  /* position: absolute;
   top: 0%;
-
-  bottom: 0%;
+  bottom: 0%; */
   width: 95%;
-
   background: white;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
   padding: 0px 100px;
 `;
 
 const FirstContainer = styled.div`
   width: 50%;
-  height: 100%;
+  padding: 0px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding-right: 50px;
-  padding-top: 150px;
+  justify-content: center;
+  align-items: center;
 `;
 
 const SecondContainer = styled.div`
-  padding-top: 150px;
   width: 50%;
   height: 100%;
-  position: relative;
   z-index: 12;
-`;
-const ThirdContainer = styled.div`
-  padding-top: 150px;
-  width: 50%;
-  height: 100%;
-  position: relative;
-  z-index: 12;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
-const BackgroundImage = styled.img`
-  position: absolute;
-  z-index: 10;
+const ImageDiv = styled.div`
+  position: relative;
+  width: 50%;
+  img {
+    width: 200px;
+  }
+`;
+
+const IngredientsDiv = styled.div`
+  width: 50%;
+`;
+const ThirdContainer = styled.div`
+  width: 50%;
   height: 100%;
-  width: 100%;
-  object-fit: cover;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 12;
+`;
+const InstructionsWrapper = styled.div`
+  width: 50%;
+`;
+const CommentSection = styled.div`
+  width: 50%;
 `;
 
 const RecipeImage = styled.img`
-  z-index: 12;
-  height: 50%;
-  width: 50%;
+  z-index: -1;
+
+  width: 100px;
   position: absolute;
 
   border-radius: 10px;
   object-fit: contain;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 15%;
+  left: 7%;
+`;
+const Frame = styled.img`
+  z-index: 20;
+  height: 50%;
+  width: 300px;
+  border-radius: 10px;
+  object-fit: contain;
 `;
 
 const Title = styled.h1`
   font-size: 32px;
   margin-bottom: 20px;
-`;
-
-const Section = styled.div`
-  margin-bottom: 40px;
+  font-family: Bubbly-Soda;
+  letter-spacing: 1px;
+  color: #805a8b;
 `;
 
 const LikeButton = styled.button`
@@ -181,11 +289,10 @@ const Instructions = styled.p`
 
 const Info = styled.div`
   width: 500px;
-  height: 150px;
-  background: #e29b7e;
+
   z-index: 20;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
 
   border-radius: 10px;
   p {

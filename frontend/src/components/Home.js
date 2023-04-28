@@ -4,10 +4,11 @@ import styled from "styled-components";
 const Home = () => {
   return (
     <Wrapper>
+      <StyledImage src={backgroundImage} />
       <StyledLandingInfo>
-        <h1>What's in your kitchen?</h1>
+        <h1>WHAT'S IN YOUR KITCHEN?</h1>
         <div>
-          <h3>TRY A RECIPE AND UNLEASH YOUR INNER CHEF</h3>
+          <h3>TRY A RECIPE AND UNLEASH YOUR INNER CHEF!</h3>
         </div>
       </StyledLandingInfo>
     </Wrapper>
@@ -17,16 +18,28 @@ const Home = () => {
 const Wrapper = styled.div`
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
-
   img {
     object-fit: cover;
   }
 `;
+const StyledImage = styled.img`
+  position: absolute;
+  left: 0%;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  z-index: -2;
+  object-fit: cover;
+`;
+
 const StyledLandingInfo = styled.div`
   width: 100vw;
   margin: 0px auto;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 
   h1 {
     padding-top: 15rem;
@@ -34,13 +47,24 @@ const StyledLandingInfo = styled.div`
     position: absolute;
     top: 60%;
     color: white;
-    font-family: "Forum";
-    font-size: 96px;
+    font-family: Bubbly-Soda;
+    font-size: 79px;
+    color: #805a8b;
+    letter-spacing: 4px;
+    padding-top: 25vh;
+  }
+  h3 {
+    font-family: "A little sunshine";
+    color: #805a8b;
+    font-size: 25.9px;
+    letter-spacing: 6px;
+    padding-top: 2vh;
   }
   div {
     position: absolute;
     top: 80%;
     padding-top: 25rem;
+    padding-top: 52vh;
     padding-left: 4rem;
     color: white;
     button {
