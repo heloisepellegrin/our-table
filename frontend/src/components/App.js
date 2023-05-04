@@ -28,6 +28,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/recipes" element={<RandomRecipes />} />
+            <Route path="/generated-recipes" element={<RandomRecipes />} />
             <Route path="/recipe/:id" element={<RecipeDetails />} />
             <Route path="/fridge" element={<Fridge />} />
             <Route path="/pantry" element={<Pantry />} />

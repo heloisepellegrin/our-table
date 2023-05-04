@@ -39,47 +39,71 @@ import orangejuice from "../assets/fridgeingredients/orangejuice.png";
 import basket from "../assets/basket.png";
 import styled from "styled-components";
 import { TableContext } from "./TableContext";
+import { useNavigate } from "react-router-dom";
 
 const Fridge = () => {
-  const { myBasket, setMyBasket } = useContext(TableContext);
+  const { myBasket, setMyBasket, setGeneratedRecipes } =
+    useContext(TableContext);
+  const [userInput, setUserInput] = useState("");
+  const navigate = useNavigate();
   console.log("myBasket", myBasket);
   const items = [
-    lime,
-    lemon,
-    tortilla,
-    eggs,
-    butter,
-    yogurt,
-    strawberries,
-    blueberries,
-    orange,
-    olives,
-    garlic,
-    yellowonion,
-    redonion,
-    greenonion,
-    broccoli,
-    carrots,
-    zucchini,
-    spinach,
-    chicken,
-    bacon,
-    steak,
-    shrimps,
-    tuna,
-    salmon,
-    mozzarella,
-    feta,
-    creamcheese,
-    soysauce,
-    hotsauce,
-    ketchup,
-    mayonnaise,
-    applejuice,
-    cream,
-    orangejuice,
+    { src: lime, alt: "lime" },
+    { src: lemon, alt: "lemon" },
+    { src: tortilla, alt: "tortilla" },
+    { src: eggs, alt: "eggs" },
+    { src: butter, alt: "butter" },
+    { src: yogurt, alt: "yogurt" },
+    { src: strawberries, alt: "strawberries" },
+    { src: blueberries, alt: "blueberries" },
+    { src: orange, alt: "orange" },
+    { src: olives, alt: "olives" },
+    { src: garlic, alt: "garlic" },
+    { src: yellowonion, alt: "yellowonion" },
+    { src: redonion, alt: "redonion" },
+    { src: greenonion, alt: "greenonion" },
+    { src: broccoli, alt: "broccoli" },
+    { src: carrots, alt: "carrots" },
+    { src: zucchini, alt: "zucchini" },
+    { src: spinach, alt: "spinach" },
+    { src: chicken, alt: "chicken" },
+    { src: bacon, alt: "bacon" },
+    { src: steak, alt: "steak" },
+    { src: shrimps, alt: "shrimps" },
+    { src: tuna, alt: "tuna" },
+    { src: salmon, alt: "salmon" },
+    { src: mozzarella, alt: "mozzarella" },
+    { src: feta, alt: "feta" },
+    { src: creamcheese, alt: "creamcheese" },
+    { src: soysauce, alt: "soysauce" },
+    { src: hotsauce, alt: "hotsauce" },
+    { src: ketchup, alt: "ketchup" },
+    { src: mayonnaise, alt: "mayonnaise" },
+    { src: applejuice, alt: "applejuice" },
+    { src: cream, alt: "cream" },
+    { src: orangejuice, alt: "orangejuice" },
   ];
 
+  const submitHandler = (e) => {
+    e.preventDefault();
+    const inputArray = userInput.split(", ");
+
+    setMyBasket(myBasket.concat(inputArray));
+
+    fetch(`/api/get-by-ingredients?ingredients=${myBasket}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === 200) {
+          if (!data.data.length) {
+            window.alert("Nothing found sorry!");
+          } else {
+            setGeneratedRecipes(data.data);
+            setMyBasket([]);
+            navigate("/generated-recipes");
+          }
+        }
+      });
+  };
   return (
     <>
       <Wrapper>
@@ -102,17 +126,36 @@ const Fridge = () => {
                   }
                 }}
               >
-                <img src={item} alt={item} />
+                <img src={item.src} alt={item.alt} />
               </Draggable>
             );
           })}
         </ItemsWrapper>
+
+        <form onSubmit={submitHandler}>
+          <StyledInput
+            onChange={(e) => {
+              setUserInput(e.target.value);
+            }}
+            placeholder="jalapenõ, margarine, rice, ..."
+          />
+          <Button>Generate My Recipes</Button>
+        </form>
 
         <img src={basket} />
       </Wrapper>
     </>
   );
 };
+
+const StyledInput = styled.input`
+  height: 35px;
+  width: 250px;
+  background-color: #f1bfab;
+  border-radius: 7px;
+  border: none;
+  padding: 0 10px;
+`;
 
 const FridgeImage = styled.img`
   height: 100%;
@@ -141,5 +184,36 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   position: relative;
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  input::placeholder {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: black;
+    font-family: "A little sunshine";
+    letter-spacing: 2px;
+    font-size: 15px;
+  }
+`;
+
+const Button = styled.button`
+  background: #f1bfab;
+  color: #805a8b;
+  border-radius: 7px;
+  font-family: Bubbly-Soda;
+  font-size: 15px;
+  letter-spacing: 2px;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  &:hover {
+    color: #f1bfab;
+    background: #805a8b;
+    transition: 0.3s ease-in-out all;
+  }
+  margin-top: 10px;
 `;
 export default Fridge;

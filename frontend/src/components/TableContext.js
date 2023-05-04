@@ -1,22 +1,19 @@
 import { createContext, useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useLocation } from "react-router-dom";
 export const TableContext = createContext(null);
 
 export const TableProvider = ({ children }) => {
   const [randomRecipes, setRandomRecipes] = useState([]);
+  const [generatedRecipes, setGeneratedRecipes] = useState([]);
   const [isRandom, setIsRandom] = useState(false);
   const [singleRecipe, setSingleRecipe] = useState({});
   const { user, isAuthenticated } = useAuth0();
   const [myBasket, setMyBasket] = useState([]);
+  const [myPantry, setMyPantry] = useState([]);
   const [comment, setComment] = useState("");
-
-  useEffect(() => {
-    fetch("/api/get-random")
-      .then((res) => res.json())
-      .then((data) => {
-        setRandomRecipes(data.data.recipes);
-      });
-  }, []);
+  const location = useLocation;
+  console.log("location", window.location.pathname);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -44,6 +41,10 @@ export const TableProvider = ({ children }) => {
         setMyBasket,
         comment,
         setComment,
+        myPantry,
+        setMyPantry,
+        generatedRecipes,
+        setGeneratedRecipes,
       }}
     >
       {children}

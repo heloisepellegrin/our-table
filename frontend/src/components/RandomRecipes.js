@@ -1,24 +1,58 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { TableContext } from "./TableContext";
 import RecipeCard from "./RecipeCard";
 import styled from "styled-components";
 
 const RandomRecipes = () => {
-  const { randomRecipes, setRandomRecipes, isRandom, setIsRandom } =
-    useContext(TableContext);
+  const {
+    randomRecipes,
+    setRandomRecipes,
+    generatedRecipes,
+    isRandom,
+    setIsRandom,
+  } = useContext(TableContext);
+
+  useEffect(() => {
+    fetch("/api/get-random")
+      .then((res) => res.json())
+      .then((data) => {
+        setRandomRecipes(data.data.recipes);
+      });
+  }, []);
+  const location = window.location.pathname;
   return (
     <CardContainer>
-      {randomRecipes.map((recipe) => {
-        return (
-          <RecipeCard
-            id={recipe.id}
-            image={recipe.image}
-            title={recipe.title}
-            readyInMinutes={recipe.readyInMinutes}
-            ingredients={recipe.extendedIngredients}
-          />
-        );
-      })}
+      {location === "/recipes"
+        ? randomRecipes.map((recipe) => {
+            return (
+              <RecipeCard
+                id={recipe.id}
+                image={recipe.image}
+                title={recipe.title}
+                readyInMinutes={recipe.readyInMinutes}
+                ingredients={
+                  recipe.extendedIngredients
+                    ? recipe.extendedIngredients
+                    : recipe.usedIngredients
+                }
+              />
+            );
+          })
+        : generatedRecipes.map((recipe) => {
+            return (
+              <RecipeCard
+                id={recipe.id}
+                image={recipe.image}
+                title={recipe.title}
+                readyInMinutes={recipe.readyInMinutes}
+                ingredients={
+                  recipe.extendedIngredients
+                    ? recipe.extendedIngredients
+                    : recipe.usedIngredients
+                }
+              />
+            );
+          })}
     </CardContainer>
   );
 };

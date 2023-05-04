@@ -3,8 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { TableContext } from "./TableContext";
 import Comments from "./Comments";
-import recipeframe from "../assets/recipeframe.png";
+import recipephoto from "../assets/recipephoto.png";
 import { useAuth0 } from "@auth0/auth0-react";
+
 const RecipeDetails = () => {
   const { singleRecipe, setSingleRecipe, comment } = useContext(TableContext);
   const [recipeComments, setRecipeComments] = useState([]);
@@ -15,6 +16,8 @@ const RecipeDetails = () => {
   const { id } = useParams();
 
   const [liked, setLiked] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
+
   useEffect(() => {
     console.log("fetch");
     fetch(`/api/get-recipe-byId/${id}`)
@@ -26,9 +29,9 @@ const RecipeDetails = () => {
     fetch(`/api/comments?recipeId=${id}`)
       .then((res) => res.json())
       .then((data) => {
-        setRecipeComments(data.data);
+        if (Array.isArray(data.data)) setRecipeComments(data.data);
       });
-  }, [id, comment, commentId]);
+  }, [id, comment, commentId, isDeleted]);
 
   const handleUpdate = (id) => {
     fetch(`/api/comments/${id}`, {
@@ -47,6 +50,21 @@ const RecipeDetails = () => {
         }
       });
   };
+  const deleteHandler = (id) => {
+    fetch(`/api/comments/${id}`, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === 200) {
+          setIsDeleted(!isDeleted);
+        }
+      });
+  };
   const handleLike = () => {
     setLiked(!liked);
   };
@@ -58,25 +76,35 @@ const RecipeDetails = () => {
   return (
     <Container>
       <FirstContainer>
-        <Title>{singleRecipe.title}</Title>
+        <Title>{singleRecipe.title.toUpperCase()}</Title>
         <Info>
           <p>{singleRecipe.servings} servings</p>
           <p>{singleRecipe.readyInMinutes} minutes</p>
-          <p>{singleRecipe.dairyFree ? "dairy free" : "not dairy free"}</p>
+          <p>{singleRecipe.dairyFree ? "Dairy free" : "Not dairy free"}</p>
         </Info>
       </FirstContainer>
       <SecondContainer>
         <ImageDiv>
-          <Frame src={recipeframe} />
           <RecipeImage src={singleRecipe.image} />
         </ImageDiv>
         <IngredientsDiv>
-          <SectionTitle>Ingredients</SectionTitle>
-          <ul>
-            {singleRecipe.extendedIngredients.map((item) => (
-              <li>{item.name.charAt(0).toUpperCase() + item.name.slice(1)}</li>
-            ))}
-          </ul>
+          <SectionTitle>INGREDIENTS</SectionTitle>
+          <IngredientsWrapper>
+            <ul>
+              {singleRecipe.extendedIngredients.slice(0, 10).map((item) => (
+                <li>
+                  {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
+                </li>
+              ))}
+            </ul>
+            <ul>
+              {singleRecipe.extendedIngredients.slice(10).map((item) => (
+                <li>
+                  {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
+                </li>
+              ))}
+            </ul>
+          </IngredientsWrapper>
         </IngredientsDiv>
       </SecondContainer>
       <ThirdContainer>
@@ -84,6 +112,7 @@ const RecipeDetails = () => {
           <h3>We wanna hear from you!</h3>
           {isAuthenticated && <Comments id={id} />}
 
+          <h3>Previous comments</h3>
           <PastComments>
             {recipeComments.map((comment) => {
               console.log("here comment", comment);
@@ -103,7 +132,13 @@ const RecipeDetails = () => {
                           >
                             Edit
                           </button>
-                          <button>Delete</button>
+                          <button
+                            onClick={() => {
+                              deleteHandler(comment._id);
+                            }}
+                          >
+                            Delete
+                          </button>
                         </div>
                       </>
                     )}
@@ -131,6 +166,7 @@ const RecipeDetails = () => {
             })}
           </PastComments>
           <button
+            className="browse-recipes-btn"
             onClick={() => {
               navigate("/recipes");
             }}
@@ -139,9 +175,14 @@ const RecipeDetails = () => {
           </button>
         </CommentSection>
         <InstructionsWrapper>
-          <SectionTitle>Instructions</SectionTitle>
+          <SectionTitle>INSTRUCTIONS</SectionTitle>
           <Instructions
-            dangerouslySetInnerHTML={{ __html: singleRecipe.instructions }}
+            dangerouslySetInnerHTML={{
+              __html: singleRecipe.instructions
+                .split("\n")
+                .map((item) => `<div>${item.trim()}</div><br/>`)
+                .join(""),
+            }}
           />
         </InstructionsWrapper>
       </ThirdContainer>
@@ -151,8 +192,6 @@ const RecipeDetails = () => {
 
 const EditSection = styled.div`
   display: flex;
-  /* justify-content: center;
-  align-items: center; */
   justify-content: space-between;
   padding: 0px 20px;
 
@@ -166,26 +205,33 @@ const EditSection = styled.div`
     }
   }
 `;
+
 const PastComments = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
   height: 100px;
-  border: 1px solid red;
+  background-color: #f1bfab;
+  width: 80%;
+  border-radius: 10px;
+  margin-bottom: 25px;
 `;
+
+const IngredientsWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
 const Container = styled.div`
   height: 100%;
   overflow-y: scroll;
-  /* position: absolute;
-  top: 0%;
-  bottom: 0%; */
   width: 95%;
   background: white;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  padding: 0px 100px;
+  padding: 20px 100px;
 `;
 
 const FirstContainer = styled.div`
@@ -198,7 +244,7 @@ const FirstContainer = styled.div`
 `;
 
 const SecondContainer = styled.div`
-  width: 50%;
+  width: 80%;
   height: 100%;
   z-index: 12;
   display: flex;
@@ -207,96 +253,113 @@ const SecondContainer = styled.div`
 `;
 
 const ImageDiv = styled.div`
-  position: relative;
   width: 50%;
   img {
-    width: 200px;
+    width: 80%;
   }
 `;
 
 const IngredientsDiv = styled.div`
   width: 50%;
+  font-family: "A little sunshine";
+  letter-spacing: 2px;
+  font-size: 20px;
+  padding-top: 10px;
 `;
+
 const ThirdContainer = styled.div`
-  width: 50%;
+  width: 80%;
   height: 100%;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   z-index: 12;
+  padding-top: 20px;
 `;
+
 const InstructionsWrapper = styled.div`
   width: 50%;
 `;
+
 const CommentSection = styled.div`
   width: 50%;
+  h3 {
+    font-family: "A little sunshine";
+    letter-spacing: 2px;
+  }
+  button {
+    background: white;
+    color: #805a8b;
+    border-radius: 7px;
+    font-family: Bubbly-Soda;
+    font-size: 15px;
+    letter-spacing: 2px;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    &:hover {
+      color: white;
+      background: #805a8b;
+      transition: 0.3s ease-in-out all;
+    }
+  }
+  .browse-recipes-btn {
+    background-color: #f1bfab;
+    color: #805a8b;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .browse-recipes-btn:hover {
+    background-color: #805a8b;
+    color: white;
+  }
 `;
 
 const RecipeImage = styled.img`
   z-index: -1;
-
   width: 100px;
-  position: absolute;
-
-  border-radius: 10px;
-  object-fit: contain;
-  top: 15%;
-  left: 7%;
-`;
-const Frame = styled.img`
-  z-index: 20;
-  height: 50%;
-  width: 300px;
   border-radius: 10px;
   object-fit: contain;
 `;
 
 const Title = styled.h1`
   font-size: 32px;
-  margin-bottom: 20px;
+  margin-bottom: 3px;
   font-family: Bubbly-Soda;
   letter-spacing: 1px;
   color: #805a8b;
-`;
-
-const LikeButton = styled.button`
-  padding: 10px 20px;
-  border: none;
-  background-color: #f7d794;
-  border-radius: 5px;
-  color: #2d3436;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    background-color: #ffbe76;
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
+  text-align: center;
 `;
 
 const SectionTitle = styled.h2`
   font-size: 24px;
   margin-bottom: 10px;
+  font-family: Bubbly-Soda;
+  letter-spacing: 1.5px;
 `;
 
 const Instructions = styled.p`
   font-size: 18px;
+  font-family: "A little sunshine";
+  letter-spacing: 2px;
+  font-size: 20px;
 `;
 
 const Info = styled.div`
   width: 500px;
-
   z-index: 20;
   display: flex;
   justify-content: space-around;
-
   border-radius: 10px;
   p {
-    padding: 0px 10px;
+    font-family: "A little sunshine";
+    letter-spacing: 2px;
+    color: #805a8b;
+    font-size: 20px;
   }
 `;
 export default RecipeDetails;

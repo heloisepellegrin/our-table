@@ -1,8 +1,22 @@
 import styled from "styled-components";
 
 import { useNavigate } from "react-router-dom";
-const RecipeCard = ({ image, title, readyInMinutes, ingredients, id }) => {
+const RecipeCard = ({ image, title, ingredients, id }) => {
   const navigate = useNavigate();
+
+  const modifiedIngredients = ingredients
+    .map((item, index) => {
+      if (index < 10) {
+        if (index === 0) {
+          return item.name.charAt(0).toUpperCase() + item.name.slice(1);
+        }
+        return item.name;
+      }
+    })
+    .join(", ");
+
+  const lastIndex = modifiedIngredients.lastIndexOf(",");
+
   return (
     <>
       <StyledWrapper>
@@ -15,15 +29,24 @@ const RecipeCard = ({ image, title, readyInMinutes, ingredients, id }) => {
         </button>
         <img src={image} />
         <div>
-          {ingredients.map((item) => {
-            return <span>{item.name}</span>;
-          })}
+          <span>
+            {modifiedIngredients.split(", ,")[0].replace(/,\s*$/, "")}
+          </span>
         </div>
       </StyledWrapper>
     </>
   );
 };
 
+// {ingredients
+//           .map((item, index) => {
+//             if (index === 0) {
+//               return item.name.charAt(0).toUpperCase() + item.name.slice(1);
+//             }
+//             return item.name;
+//           })
+//           .filter((index) => index < 10)
+//           .join(", ")}
 const StyledWrapper = styled.div`
   border-radius: 20px;
   box-shadow: 10px solid black;
@@ -69,6 +92,8 @@ const StyledWrapper = styled.div`
     align-items: center;
     font-family: "A little sunshine";
     letter-spacing: 2px;
+    text-align: center;
+    padding: 15px;
   }
   width: 250px;
 `;

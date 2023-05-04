@@ -30,12 +30,13 @@ const Comments = ({ id }) => {
           <form onSubmit={submitComment}>
             <textarea
               value={comment}
-              placeholder="Your comment"
+              placeholder="Write here..."
               onChange={(e) => {
                 setComment(e.target.value);
               }}
+              style={{ textIndent: "10px", padding: "10px" }}
             />
-            <button>Comment</button>
+            <button className="submit-btn">Submit!</button>
           </form>
         </CommentBox>
       </Wrapper>
@@ -48,25 +49,44 @@ const CommentBox = styled.div`
 
   form {
     display: flex;
+    flex-direction: column;
   }
 
   textarea {
-    padding: 50px 10px;
+    padding: 15px;
     background-color: #f1bfab;
     border: none;
     border-radius: 10px;
     resize: none;
     color: white;
+    position: relative;
+    width: 80%;
+    height: 80px;
+    margin-bottom: 10px;
   }
 
-  button {
+  textarea::placeholder {
     position: absolute;
-    right: 40%;
-    bottom: 10%;
-    margin-left: 5px;
-    background: white;
+    top: 10px;
+    left: 10px;
+    color: black;
+    font-family: "A little sunshine";
+    letter-spacing: 2px;
+    font-size: 15px;
+  }
+
+  .submit-btn {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    right: 20px;
+    background: #f1bfab;
+    width: 100px;
     color: #805a8b;
     border-radius: 7px;
+    font-family: Bubbly-Soda;
+    font-size: 15px;
+    letter-spacing: 2px;
+    padding: 7px;
     border: none;
     cursor: pointer;
     &:hover {
@@ -80,7 +100,7 @@ const CommentBox = styled.div`
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 50px 0px;
+  padding: 5px 0px;
   margin-right: 20px;
 `;
 export default Comments;

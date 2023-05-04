@@ -52,6 +52,7 @@ const StyledLandingInfo = styled.div`
     color: #805a8b;
     letter-spacing: 4px;
     padding-top: 25vh;
+    text-align: center;
   }
   h3 {
     font-family: "A little sunshine";

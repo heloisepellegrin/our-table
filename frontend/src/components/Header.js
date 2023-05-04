@@ -68,7 +68,7 @@ const Header = () => {
             ? "LOG OUT"
             : isAuthenticated
             ? "PROFILE"
-            : "lOG IN"}
+            : "LOGIN"}
         </Container>
       </StyledNav>
     </Wrapper>

@@ -18,7 +18,7 @@ const options = {
 const getByIngredients = async (req, res) => {
   try {
     var options = {
-      uri: `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${req.query.ingredients}&number=100&apiKey=${API_KEY}`,
+      uri: `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${req.query.ingredients}&number=10&apiKey=${API_KEY}`,
       json: true,
     };
     const result = await httpRequest(options);
@@ -32,7 +32,7 @@ const getByIngredients = async (req, res) => {
 const getRandomRecipes = async (req, res) => {
   try {
     var options = {
-      uri: `https://api.spoonacular.com/recipes/random?number=100&apiKey=${API_KEY}`,
+      uri: `https://api.spoonacular.com/recipes/random?number=10&apiKey=${API_KEY}`,
       json: true,
     };
     const result = await httpRequest(options);
